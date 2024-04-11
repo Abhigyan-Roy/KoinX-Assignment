@@ -10,8 +10,8 @@ exports.storeCryptocurrencies = async (data) => {
     await Crypto.insertMany(data);
 };
 exports.scheduleJob = async () => {
-    
+    cron.schedule('* * * * *', async () => {
         const data = await this.fetchCryptocurrencies();
         await this.storeCryptocurrencies(data);
-    
+    });
 };
