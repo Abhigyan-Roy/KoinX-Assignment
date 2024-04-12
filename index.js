@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+require("dotenv").config();
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -10,6 +11,7 @@ const MongoDbStore = require('connect-mongo');
 const cryptoController = require('./controllers/cryptoController');
 const axios = require('axios');
 const cors = require('cors');
+const { env } = require('process');
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -21,7 +23,7 @@ app.use(
         resave: false,
         saveUninitialized: false,
         store: MongoDbStore.create({
-            mongoUrl: 'mongodb+srv://Abhigyan:25052002@cluster0.ekfswbx.mongodb.net/KoinX_db?retryWrites=true&w=majority'
+            mongoUrl: env.DB_URI
         })
     })
 );
@@ -41,10 +43,9 @@ app.get('/fetch-and-store-cryptocurrencies', async (req, res) => {
 app.get('/get-price', async (req, res) => {
     const { fromCurrency, toCurrency, date } = req.query;
     console.log(fromCurrency)
-    const apiKey = 'CG-moSmYjszrcr3S5aEjX4VymTt';
     const config = {
         headers: {
-            'x_cg_pro_api_key': apiKey
+            'x_cg_pro_api_key': env.API_KEY
         }
     };
     const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${fromCurrency}/history?date=${date}`, config);
